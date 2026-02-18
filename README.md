@@ -13,12 +13,9 @@
 
 ## 📸 Sample Predictions
 
-> Each row shows: **Input Image** | **Ground Truth** | **AI Prediction**
+> Each row shows: **Input Image** | **Ground Truth** | **AI Prediction** | **Overlay Image**
 
-| | | |
-|:-:|:-:|:-:|
-| ![Result 0](final_submission_results/result_0.png) | ![Result 1](final_submission_results/result_1.png) | ![Result 2](final_submission_results/result_2.png) |
-| ![Result 3](final_submission_results/result_3.png) | ![Result 4](final_submission_results/result_4.png) | |
+![sample2](https://github.com/user-attachments/assets/ee6741d8-b982-45bf-990a-2f073db7fb2b)
 
 ---
 
@@ -53,6 +50,8 @@
 | 8 | 7100 | Landscape | 🟧 `#F4A460` |
 | 9 | 10000 | Sky | 🔵 `#87CEEB` |
 
+ ![terrain_class](https://github.com/user-attachments/assets/a16bf38d-9c4c-40ab-9fa2-a75f9ca3e774) 
+
 ---
 
 ## 📊 Performance
@@ -61,29 +60,18 @@
 
 | Metric | Score |
 |--------|------:|
-| **Pixel Accuracy** | 87.78% |
-| **Mean IoU** | 65.38% |
+| **Pixel Accuracy** | 88.26% |
+| **Mean IoU** | 67.60% |
 
 ### Per-Class IoU (Intersection over Union)
 
-| Class | IoU | Rating |
-|-------|----:|:------:|
-| Sky | 98.73% | 🟢 Excellent |
-| Trees | 87.63% | 🟢 Excellent |
-| Dry Grass | 70.37% | 🟡 Good |
-| Lush Bushes | 70.14% | 🟡 Good |
-| Landscape | 69.78% | 🟡 Good |
-| Flowers | 64.22% | 🟡 Good |
-| Logs | 56.21% | 🟠 Fair |
-| Dry Bushes | 48.93% | 🟠 Fair |
-| Rocks | 47.84% | 🟠 Fair |
-| Ground Clutter | 39.98% | 🔴 Needs Work |
+![per-class-iou](https://github.com/user-attachments/assets/8864229b-ee85-4143-9c2c-1bca986947a2)
 
 > **Note:** Small / rare objects (Logs, Rocks, Ground Clutter) are harder to detect. The hybrid CrossEntropy + Dice loss was specifically added to improve these classes.
 
 ### Confusion Matrix
 
-![Confusion Matrix](final_submission_results/confusion_matrix.png)
+![WhatsApp Image 2026-02-19 at 1 22 44 AM](https://github.com/user-attachments/assets/752d70ad-d946-4cad-8ee9-d01286103e15)
 
 ---
 
@@ -98,6 +86,7 @@ The model was iteratively improved across **4 training versions**:
 | V2 | `local_train_v2.py` | 256 | 6 | CE | ❌ | **Fixed mask ID mapping** (100→0, 200→1, …) |
 | V3 | `local_train_v3.py` | 256 | 6 | CE + Dice | ✅ Flip H/V | Augmentation, hybrid loss, cosine LR |
 | V4 | `local_train_final.py` | 512 | 2 | CE + Dice | ✅ Flip H/V | High-res fine-tuning (LR=1e-5) |
+| V5 | `train.py` | 512 | 2 | CE + Dice | ✅ Flip H/V | Improved Performance |
 
 ### What Changed at Each Step
 
@@ -105,6 +94,7 @@ The model was iteratively improved across **4 training versions**:
 - **V1 → V2**: 🐛 **Critical bug fix** — masks were being read as grayscale (`cv2.imread(path, 0)`), truncating raw IDs (100, 200, …, 10000). Changed to `cv2.imread(path, -1)` and added `ID_MAPPING` to remap to 0–9
 - **V2 → V3**: Added horizontal/vertical flip augmentation, switched to hybrid CrossEntropy + Dice loss (massive IoU improvement for small classes like Logs), added cosine annealing LR scheduler
 - **V3 → V4**: Bumped resolution to 512×512, lowered batch to 2, fine-tuned with LR=1e-5 from V3 weights
+- **V4 → V5**: Trained model deeply with more precision resulting in an improved and increased IoU value.
 
 ---
 
@@ -122,6 +112,7 @@ desert_hackathon/
 ├── local_train_v2.py           # V2 — Fixed mask ID mapping
 ├── local_train_v3.py           # V3 — Augmentation + hybrid loss + scheduler
 ├── local_train_final.py        # V4 — 512×512 high-res fine-tuning
+├── train.py                    # V5 — More precised training
 │
 ├── check_model.py              # Quick single-image visual check
 ├── accurate_check.py           # Corrected mask reading validation
