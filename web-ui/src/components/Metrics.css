@@ -1,0 +1,127 @@
+.metrics-section {
+    background: var(--bg-secondary);
+}
+
+/* ═══ Big Cards ═══ */
+.metrics__cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    margin-top: 56px;
+    margin-bottom: 72px;
+}
+
+.metrics__big-card {
+    text-align: center;
+    padding: 40px 28px;
+}
+
+.metrics__big-value {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--amber-glow), var(--orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+}
+
+.metrics__big-value--model {
+    font-size: 2.4rem;
+}
+
+.metrics__big-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--sand-light);
+    margin-bottom: 8px;
+}
+
+.metrics__big-desc {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* ═══ Bar Chart ═══ */
+.metrics__bars-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--sand-light);
+    margin-bottom: 28px;
+}
+
+.metrics__bars {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.metrics__bar-row {
+    display: grid;
+    grid-template-columns: 160px 1fr 60px;
+    align-items: center;
+    gap: 16px;
+}
+
+.metrics__bar-name {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.metrics__bar-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.metrics__bar-track {
+    height: 12px;
+    background: rgba(194, 149, 107, 0.08);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.metrics__bar-fill {
+    height: 100%;
+    border-radius: 6px;
+    transition: width 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+}
+
+.metrics__bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 30px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2));
+    border-radius: 0 6px 6px 0;
+}
+
+.metrics__bar-value {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-align: right;
+}
+
+@media (max-width: 768px) {
+    .metrics__cards {
+        grid-template-columns: 1fr;
+        max-width: 400px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .metrics__bar-row {
+        grid-template-columns: 120px 1fr 50px;
+        gap: 10px;
+    }
+}
