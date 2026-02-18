@@ -62,6 +62,10 @@
 |--------|------:|
 | **Pixel Accuracy** | 88.26% |
 | **Mean IoU** | 67.60% |
+| **mAP50 Value** | 48.89% |
+
+**🎯 Metric Selection**: Why mIoU over mAP50?
+While mAP50 is a standard metric for Object Detection (bounding boxes), we architected a Semantic Segmentation (U-Net) model to achieve pixel-perfect terrain mapping. For autonomous offroad navigation, knowing the exact irregular shape of a winding dirt path or a jagged rock is much more valuable than a generalized bounding box. Therefore, we evaluated our model using Mean IoU (67.60%), which is the gold standard for measuring pixel-level environmental perception.
 
 ### Per-Class IoU (Intersection over Union)
 
