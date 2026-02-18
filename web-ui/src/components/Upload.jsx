@@ -5,7 +5,7 @@ import './Upload.css';
 const API_URL = 'http://localhost:5050/predict';
 
 export default function Upload() {
-    const [ref, visible] = useScrollReveal(0.1);
+    const [headerRef, headerVisible] = useScrollReveal(0.2);
     const [dragOver, setDragOver] = useState(false);
     const [image, setImage] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
@@ -42,9 +42,9 @@ export default function Upload() {
             if (!res.ok) throw new Error('Prediction failed');
             const data = await res.json();
             setResult(data);
-        } catch (err) {
+        } catch {
             setError(
-                'Could not connect to the AI server. Make sure the API server is running: python api_server.py'
+                'Could not reach the API. Run: python web-ui/api_server.py'
             );
         } finally {
             setLoading(false);
@@ -62,16 +62,19 @@ export default function Upload() {
     return (
         <section id="try-it" className="section upload-section">
             <div className="container">
-                <div className="reveal" ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(50px)', transition: 'all 0.8s ease' }}>
-                    <span className="section-label">Try It</span>
-                    <h2 className="section-title">See AI Terrain Mapping in Action</h2>
-                    <p className="section-subtitle">Upload a desert terrain image and watch our AI identify every element of the landscape.</p>
+                <div
+                    ref={headerRef}
+                    className={`upload__header ${headerVisible ? 'is-visible' : ''}`}
+                >
+                    <p className="upload__label">Demo</p>
+                    <h2 className="upload__title">Run inference on your own image</h2>
+                    <p className="upload__desc">Drop a terrain photo and see what the model outputs.</p>
                 </div>
 
                 <div className="upload__content">
                     {!imageUrl ? (
                         <div
-                            className={`upload__dropzone glass-card ${dragOver ? 'upload__dropzone--active' : ''}`}
+                            className={`upload__dropzone ${dragOver ? 'upload__dropzone--active' : ''}`}
                             onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
                             onDragLeave={() => setDragOver(false)}
                             onDrop={handleDrop}
@@ -84,40 +87,37 @@ export default function Upload() {
                                 onChange={(e) => handleFile(e.target.files[0])}
                                 style={{ display: 'none' }}
                             />
-                            <div className="upload__dropzone-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                                    <polyline points="17 8 12 3 7 8" />
-                                    <line x1="12" y1="3" x2="12" y2="15" />
-                                </svg>
-                            </div>
+                            <svg className="upload__dropzone-icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
                             <p className="upload__dropzone-text">
-                                <strong>Drop your terrain image here</strong>
-                                <br />or click to browse
+                                Drop image here or <strong>browse</strong>
                             </p>
-                            <span className="upload__dropzone-hint">Supports JPG, PNG, JPEG</span>
+                            <span className="upload__dropzone-hint">JPG, PNG — any resolution</span>
                         </div>
                     ) : (
                         <div className="upload__results">
                             <div className="upload__images-row">
-                                <div className="upload__image-card glass-card">
-                                    <span className="upload__image-label">📷 Original</span>
+                                <div className="upload__image-card">
+                                    <span className="upload__image-label">Input</span>
                                     <div className="upload__image-wrapper">
                                         <img src={imageUrl} alt="Uploaded terrain" />
                                     </div>
                                 </div>
 
-                                <div className="upload__image-card glass-card">
-                                    <span className="upload__image-label">🗺️ AI Perception</span>
+                                <div className="upload__image-card">
+                                    <span className="upload__image-label">Prediction</span>
                                     <div className={`upload__image-wrapper ${scanline ? 'upload__image-wrapper--scanning' : ''}`}>
                                         {result ? (
-                                            <img src={`data:image/png;base64,${result.mask}`} alt="Segmentation result" />
+                                            <img src={`data:image/png;base64,${result.mask}`} alt="Segmentation" />
                                         ) : (
                                             <div className="upload__image-placeholder">
                                                 {loading ? (
                                                     <div className="upload__spinner" />
                                                 ) : (
-                                                    <span>Click "Analyze" to process</span>
+                                                    <span>Hit "Run" to segment</span>
                                                 )}
                                             </div>
                                         )}
@@ -126,21 +126,23 @@ export default function Upload() {
                             </div>
 
                             {result && result.confidence && (
-                                <div className="upload__confidence glass-card">
-                                    <span className="upload__confidence-label">AI Confidence</span>
-                                    <div className="upload__confidence-bar-track">
-                                        <div
-                                            className="upload__confidence-bar-fill"
-                                            style={{ width: `${result.confidence}%` }}
-                                        />
+                                <div className="upload__meta">
+                                    <div className="upload__confidence">
+                                        <span className="upload__confidence-label">Confidence</span>
+                                        <div className="upload__confidence-bar-track">
+                                            <div
+                                                className="upload__confidence-bar-fill"
+                                                style={{ width: `${result.confidence}%` }}
+                                            />
+                                        </div>
+                                        <span className="upload__confidence-value">{result.confidence.toFixed(1)}%</span>
                                     </div>
-                                    <span className="upload__confidence-value">{result.confidence.toFixed(1)}%</span>
                                 </div>
                             )}
 
                             {result && result.classes_detected && (
-                                <div className="upload__breakdown glass-card">
-                                    <span className="upload__breakdown-title">🗺️ Terrain Composition</span>
+                                <div className="upload__breakdown">
+                                    <span className="upload__breakdown-title">Composition</span>
                                     <div className="upload__breakdown-list">
                                         {result.classes_detected.map((cls) => (
                                             <div key={cls.name} className="upload__breakdown-row">
@@ -159,14 +161,14 @@ export default function Upload() {
                                 </div>
                             )}
 
-                            {error && <div className="upload__error glass-card">{error}</div>}
+                            {error && <div className="upload__error">{error}</div>}
 
                             <div className="upload__actions">
-                                <button className="btn-glow" onClick={handlePredict} disabled={loading}>
-                                    {loading ? '⏳ Analyzing...' : '🔍 Analyze Terrain'}
+                                <button className="upload__run-btn" onClick={handlePredict} disabled={loading}>
+                                    {loading ? 'Running...' : 'Run model'}
                                 </button>
                                 <button className="upload__reset-btn" onClick={reset}>
-                                    ← Upload another
+                                    Reset
                                 </button>
                             </div>
                         </div>

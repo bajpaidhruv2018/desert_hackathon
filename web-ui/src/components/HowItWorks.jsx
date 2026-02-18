@@ -1,48 +1,117 @@
-import { useScrollReveal } from '../hooks/useScrollReveal';
+import { useState } from 'react';
+import { useScrollReveal, useParallax } from '../hooks/useScrollReveal';
 import './HowItWorks.css';
 
 const STEPS = [
     {
-        icon: '📤',
         num: '01',
-        title: 'Upload Terrain',
-        desc: 'Drop any offroad terrain image — desert dunes, rocky trails, or vegetation-heavy paths.',
+        title: 'Upload',
+        desc: 'Feed any offroad image into the pipeline — desert, rock, vegetation, anything.',
+        detail: 'JPG / PNG, any resolution',
+        icon: (
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+            </svg>
+        ),
     },
     {
-        icon: '🧠',
         num: '02',
-        title: 'AI Processes',
-        desc: 'Our U-Net model with ResNet-34 encoder analyzes every pixel at 512×512 resolution.',
+        title: 'Segment',
+        desc: 'A U-Net with ResNet-34 backbone processes every pixel at 512×512.',
+        detail: 'Hybrid CE + Dice loss',
+        icon: (
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+        ),
     },
     {
-        icon: '🗺️',
         num: '03',
-        title: 'Terrain Map',
-        desc: 'Get a color-coded segmentation map identifying 10 terrain types for safe navigation.',
+        title: 'Navigate',
+        desc: 'Get a per-pixel classification across 10 terrain types, color-coded for readability.',
+        detail: '~1s inference on CPU',
+        icon: (
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <polygon points="3 11 22 2 13 21 11 13 3 11" />
+            </svg>
+        ),
     },
 ];
 
-export default function HowItWorks() {
+function PipelineCard({ step, index, active, onHover }) {
     const [ref, visible] = useScrollReveal(0.2);
+    return (
+        <div
+            ref={ref}
+            className={`pipeline__card ${visible ? 'is-visible' : ''} ${active ? 'is-active' : ''}`}
+            style={{ transitionDelay: `${index * 120}ms` }}
+            onMouseEnter={() => onHover(index)}
+            onMouseLeave={() => onHover(-1)}
+        >
+            <div className="pipeline__card-icon">{step.icon}</div>
+            <span className="pipeline__num">{step.num}</span>
+            <h3 className="pipeline__card-title">{step.title}</h3>
+            <p className="pipeline__card-desc">{step.desc}</p>
+            <span className="pipeline__card-detail">{step.detail}</span>
+
+            {/* Flow arrow between cards */}
+            {index < STEPS.length - 1 && (
+                <div className="pipeline__arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                    </svg>
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function HowItWorks() {
+    const [headerRef, headerVisible] = useScrollReveal(0.3);
+    const [gridRef, gridOffset] = useParallax(0.08);
+    const [activeCard, setActiveCard] = useState(-1);
 
     return (
-        <section id="how-it-works" className="section how-it-works">
+        <section id="pipeline" className="section pipeline">
             <div className="container">
-                <div className="reveal" ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(50px)', transition: 'all 0.8s ease' }}>
-                    <span className="section-label">How It Works</span>
-                    <h2 className="section-title">From Photo to Terrain Intelligence</h2>
-                    <p className="section-subtitle">Three simple steps to map any desert terrain for autonomous navigation.</p>
+                <div
+                    ref={headerRef}
+                    className={`pipeline__header ${headerVisible ? 'is-visible' : ''}`}
+                >
+                    <p className="pipeline__label">Pipeline</p>
+                    <h2 className="pipeline__title">Upload. Segment. Navigate.</h2>
+                    <p className="pipeline__subtitle">Three steps from raw terrain image to navigable classification</p>
                 </div>
 
-                <div className={`how-it-works__grid stagger-children ${visible ? 'visible' : ''}`}>
+                <div
+                    ref={gridRef}
+                    className="pipeline__grid"
+                    style={{ transform: `translateY(${gridOffset}px)` }}
+                >
                     {STEPS.map((step, i) => (
-                        <div key={i} className="how-it-works__card glass-card">
-                            <div className="how-it-works__num">{step.num}</div>
-                            <div className="how-it-works__icon">{step.icon}</div>
-                            <h3 className="how-it-works__card-title">{step.title}</h3>
-                            <p className="how-it-works__card-desc">{step.desc}</p>
-                            {i < STEPS.length - 1 && <div className="how-it-works__arrow">→</div>}
-                        </div>
+                        <PipelineCard
+                            key={i}
+                            step={step}
+                            index={i}
+                            active={activeCard === i}
+                            onHover={setActiveCard}
+                        />
+                    ))}
+                </div>
+
+                {/* Progress dots */}
+                <div className="pipeline__dots">
+                    {STEPS.map((_, i) => (
+                        <span
+                            key={i}
+                            className={`pipeline__dot ${activeCard === i ? 'is-active' : ''}`}
+                        />
                     ))}
                 </div>
             </div>

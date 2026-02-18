@@ -15,69 +15,65 @@ const IOU_DATA = [
     { name: 'Ground Clutter', value: 39.98, color: '#808080' },
 ];
 
-function AnimatedNumber({ target, duration = 2000, visible }) {
-    const [value, setValue] = useState(0);
-    const startTime = useRef(null);
+function AnimatedNum({ to, visible, suffix = '' }) {
+    const [val, setVal] = useState(0);
+    const start = useRef(null);
 
     useEffect(() => {
         if (!visible) return;
-        const animate = (timestamp) => {
-            if (!startTime.current) startTime.current = timestamp;
-            const elapsed = timestamp - startTime.current;
-            const progress = Math.min(elapsed / duration, 1);
-            // Ease out cubic
-            const eased = 1 - Math.pow(1 - progress, 3);
-            setValue(eased * target);
-            if (progress < 1) requestAnimationFrame(animate);
+        const run = (ts) => {
+            if (!start.current) start.current = ts;
+            const t = Math.min((ts - start.current) / 1800, 1);
+            const ease = 1 - Math.pow(1 - t, 3);
+            setVal(ease * to);
+            if (t < 1) requestAnimationFrame(run);
         };
-        requestAnimationFrame(animate);
-    }, [visible, target, duration]);
+        requestAnimationFrame(run);
+    }, [visible, to]);
 
-    return <span>{value.toFixed(value >= 10 ? 1 : 2)}</span>;
+    return <>{val.toFixed(val >= 10 ? 1 : 2)}{suffix}</>;
 }
 
 export default function Metrics() {
-    const [ref, visible] = useScrollReveal(0.15);
+    const [headerRef, headerVisible] = useScrollReveal(0.2);
     const [barsRef, barsVisible] = useScrollReveal(0.1);
 
     return (
         <section id="metrics" className="section metrics-section">
             <div className="container">
-                <div className="reveal" ref={ref} style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : 'translateY(50px)', transition: 'all 0.8s ease' }}>
-                    <span className="section-label">Performance</span>
-                    <h2 className="section-title">Battle-Tested on Desert Terrain</h2>
-                    <p className="section-subtitle">Our V3 model with hybrid CrossEntropy + Dice loss delivers strong results across all terrain types.</p>
+                <div
+                    ref={headerRef}
+                    className={`metrics__header ${headerVisible ? 'is-visible' : ''}`}
+                >
+                    <p className="metrics__label">Results</p>
+                    <h2 className="metrics__title">Validation performance</h2>
+                    <p className="metrics__desc">Trained with hybrid CrossEntropy + Dice loss, evaluated on held-out validation split.</p>
                 </div>
 
-                {/* Big metrics cards */}
-                <div className={`metrics__cards stagger-children ${visible ? 'visible' : ''}`}>
-                    <div className="metrics__big-card glass-card">
-                        <div className="metrics__big-value">
-                            <AnimatedNumber target={87.78} visible={visible} />%
+                <div className={`metrics__cards ${headerVisible ? 'is-visible' : ''}`}>
+                    <div className="metrics__card">
+                        <div className="metrics__card-val">
+                            <AnimatedNum to={87.78} visible={headerVisible} suffix="%" />
                         </div>
-                        <div className="metrics__big-label">Pixel Accuracy</div>
-                        <div className="metrics__big-desc">Percentage of correctly classified pixels across the whole validation set</div>
+                        <div className="metrics__card-key">Pixel Accuracy</div>
                     </div>
-                    <div className="metrics__big-card glass-card">
-                        <div className="metrics__big-value">
-                            <AnimatedNumber target={65.38} visible={visible} />%
+                    <div className="metrics__card">
+                        <div className="metrics__card-val">
+                            <AnimatedNum to={65.38} visible={headerVisible} suffix="%" />
                         </div>
-                        <div className="metrics__big-label">Mean IoU</div>
-                        <div className="metrics__big-desc">Average Intersection over Union across all 10 terrain classes</div>
+                        <div className="metrics__card-key">Mean IoU</div>
                     </div>
-                    <div className="metrics__big-card glass-card">
-                        <div className="metrics__big-value metrics__big-value--model">U-Net</div>
-                        <div className="metrics__big-label">Architecture</div>
-                        <div className="metrics__big-desc">ResNet-34 encoder pretrained on ImageNet, fine-tuned at 512&times;512</div>
+                    <div className="metrics__card">
+                        <div className="metrics__card-val">U-Net</div>
+                        <div className="metrics__card-key">ResNet-34, 512px</div>
                     </div>
                 </div>
 
-                {/* Per-class IoU bars */}
-                <div className="metrics__bars-section" ref={barsRef}>
-                    <h3 className="metrics__bars-title">Per-Class IoU Breakdown</h3>
+                <div ref={barsRef} className={`metrics__bars-section ${barsVisible ? 'is-visible' : ''}`}>
+                    <h3 className="metrics__bars-heading">Per-class IoU</h3>
                     <div className="metrics__bars">
                         {IOU_DATA.map((item, i) => (
-                            <div key={item.name} className="metrics__bar-row" style={{ animationDelay: `${i * 0.08}s` }}>
+                            <div key={item.name} className="metrics__bar-row">
                                 <span className="metrics__bar-name">
                                     <span className="metrics__bar-dot" style={{ background: item.color }} />
                                     {item.name}
@@ -88,11 +84,11 @@ export default function Metrics() {
                                         style={{
                                             width: barsVisible ? `${item.value}%` : '0%',
                                             background: item.color,
-                                            transitionDelay: `${i * 0.08}s`,
+                                            transitionDelay: `${i * 60}ms`,
                                         }}
                                     />
                                 </div>
-                                <span className="metrics__bar-value">{item.value}%</span>
+                                <span className="metrics__bar-val">{item.value}%</span>
                             </div>
                         ))}
                     </div>

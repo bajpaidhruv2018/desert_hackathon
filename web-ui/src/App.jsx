@@ -5,19 +5,19 @@ import Upload from './components/Upload';
 import Metrics from './components/Metrics';
 import Legend from './components/Legend';
 import Footer from './components/Footer';
+import ShaderBg from './components/ShaderBg';
+import ScrollScene from './components/ScrollScene';
 
 function App() {
   return (
     <>
+      <ShaderBg />
+      <ScrollScene />
       <Navbar />
       <Hero />
-      <div className="desert-divider" />
       <HowItWorks />
-      <div className="desert-divider" />
       <Upload />
-      <div className="desert-divider" />
       <Metrics />
-      <div className="desert-divider" />
       <Legend />
       <Footer />
     </>
