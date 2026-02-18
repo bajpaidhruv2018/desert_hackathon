@@ -17,7 +17,7 @@
 | Input Image | Ground Truth | AI Prediction |
 |:-----------:|:------------:|:-------------:|
 | ![input](final_submission_results/result_0.png) | — | — |
-| ![input](final_submission_results/result_1.png) | — | — |
+
 
 ---
 
@@ -60,23 +60,23 @@
 
 | Metric | Score |
 |--------|------:|
-| **Pixel Accuracy** | `<PIXEL_ACCURACY>`% |
-| **Mean IoU** | `<MEAN_IOU>`% |
+| **Pixel Accuracy** | `87.67`% |
+| **Mean IoU** | `65.38`% |
 
 ### Per-Class IoU
 
 | Class | IoU |
 |-------|----:|
-| Trees | `<IOU_TREES>`% |
-| Lush Bushes | `<IOU_LUSH_BUSHES>`% |
-| Dry Grass | `<IOU_DRY_GRASS>`% |
-| Dry Bushes | `<IOU_DRY_BUSHES>`% |
-| Ground Clutter | `<IOU_GROUND_CLUTTER>`% |
-| Flowers | `<IOU_FLOWERS>`% |
-| Logs | `<IOU_LOGS>`% |
-| Rocks | `<IOU_ROCKS>`% |
-| Landscape | `<IOU_LANDSCAPE>`% |
-| Sky | `<IOU_SKY>`% |
+| Trees | `87.63`% |
+| Lush Bushes | `70.14`% |
+| Dry Grass | `70.37`% |
+| Dry Bushes | `48.93`% |
+| Ground Clutter | `39.98`% |
+| Sand | `64.19`% |
+| Logs | `56.21`% |
+| Rocks | `47.84`% |
+| Landscape | `69.78`% |
+| Sky | `98.73`% |
 
 ### Confusion Matrix
 
