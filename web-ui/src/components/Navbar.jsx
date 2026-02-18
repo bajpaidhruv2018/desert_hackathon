@@ -3,10 +3,10 @@ import './Navbar.css';
 
 const NAV_LINKS = [
     { id: 'hero', label: 'Home' },
-    { id: 'how-it-works', label: 'How It Works' },
-    { id: 'try-it', label: 'Try It' },
-    { id: 'metrics', label: 'Performance' },
-    { id: 'legend', label: 'Terrain Map' },
+    { id: 'pipeline', label: 'Pipeline' },
+    { id: 'try-it', label: 'Demo' },
+    { id: 'metrics', label: 'Results' },
+    { id: 'legend', label: 'Classes' },
 ];
 
 export default function Navbar() {
@@ -16,8 +16,6 @@ export default function Navbar() {
     useEffect(() => {
         const onScroll = () => {
             setScrolled(window.scrollY > 60);
-
-            // Update active section
             for (const link of [...NAV_LINKS].reverse()) {
                 const el = document.getElementById(link.id);
                 if (el && el.getBoundingClientRect().top <= 120) {
@@ -34,8 +32,11 @@ export default function Navbar() {
         <nav className={`navbar ${scrolled ? 'navbar--scrolled' : ''}`}>
             <div className="navbar__inner container">
                 <a href="#hero" className="navbar__logo">
-                    <span className="navbar__logo-icon">🏜️</span>
-                    <span className="navbar__logo-text">DesertNav<span className="navbar__logo-ai">.AI</span></span>
+                    <svg className="navbar__logo-mark" width="28" height="28" viewBox="0 0 32 32" fill="none">
+                        <path d="M4 26 Q10 14 16 18 Q22 22 28 10" stroke="var(--terracotta)" strokeWidth="2.5" strokeLinecap="round" fill="none" />
+                        <path d="M2 28 L30 28" stroke="var(--sand-dark)" strokeWidth="1.5" strokeLinecap="round" opacity="0.4" />
+                    </svg>
+                    <span className="navbar__logo-text">desertnav</span>
                 </a>
                 <ul className="navbar__links">
                     {NAV_LINKS.map(link => (
