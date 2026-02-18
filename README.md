@@ -253,9 +253,9 @@ Unknown / unmapped pixel values in masks are assigned to class 8 (Landscape) as 
 
 | Name | Role |
 |------|------|
-| `Dhruv Bajpai` | `<ROLE>` |
-| `Samarth Shukla` | `<ROLE>` |
-| `Kshitij Trivedi` | `<ROLE>` |
+| `Dhruv Bajpai` | `Team Lead` |
+| `Samarth Shukla` | `Backend` |
+| `Kshitij Trivedi` | `Frontend` |
 
 ---
 
