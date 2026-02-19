@@ -146,12 +146,20 @@ desert_hackathon/
 - Python 3.8+
 - NVIDIA GPU with CUDA support (tested on RTX 4050 — 6 GB VRAM)
 
-### Installation
+### 1)- Installation
 
 ```bash
-git clone https://github.com/<YOUR_USERNAME>/desert_hackathon.git
+git clone https://github.com/bajpaidhruv2018/desert_hackathon.git
 cd desert_hackathon
 pip install -r requirements.txt
+```
+
+### 2)- Frontend Installation
+
+```bash
+cd web-ui
+npm install
+cd ..
 ```
 
 ### Dataset Setup
@@ -212,7 +220,22 @@ python generate_readme_assets.py
 
 ## 🌐 Web App
 
-Launch the interactive Streamlit demo:
+(Option 1) Launch the modern react web app:
+You will need two terminal windows to run the full stack.
+
+#Terminal 1 (Backend API):
+```bash
+cd web-ui
+python api_server.py
+```
+
+#Terminal 2 (Frontend UI):
+```bash
+cd web-ui
+npm run dev
+```
+
+(Option 2) Launch the interactive Streamlit demo:
 
 ```bash
 streamlit run app.py
